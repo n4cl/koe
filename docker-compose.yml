@@ -1,0 +1,9 @@
+version: '3'
+services:
+    koe:
+        build:
+            context: ./
+        volumes:
+            - ./app:/usr/local/app
+        container_name: koe_app
+        entrypoint: /bin/sh -c "while :; do sleep 10; done"

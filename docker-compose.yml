@@ -3,6 +3,8 @@ services:
     koe:
         build:
             context: ./
+        ports:
+            - "5000:5000"
         volumes:
             - ./app:/usr/local/app
         container_name: koe_app

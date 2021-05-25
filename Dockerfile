@@ -6,3 +6,5 @@ RUN pip install -r /usr/local/setup/requirements.txt
 ADD ./app /usr/local/app
 
 ENTRYPOINT ["flask", "run"]
+
+WORKDIR /usr/local/app/

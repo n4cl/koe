@@ -4,6 +4,7 @@ ADD ./setup /usr/local/setup
 RUN pip install -r /usr/local/setup/requirements.txt
 
 ADD ./app /usr/local/app
+ADD ./tests /usr/local/tests
 
 ENTRYPOINT ["flask", "run"]
 

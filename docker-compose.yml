@@ -7,5 +7,6 @@ services:
             - "5000:5000"
         volumes:
             - ./app:/usr/local/app
+            - ./tests:/usr/local/tests
         container_name: koe_app
         entrypoint: /bin/sh -c "while :; do sleep 10; done"

@@ -14,12 +14,10 @@ class Koe:
         config.read(_file_name)
         return config["DEFAULT"]
 
-    def fetch_user(self, _key) -> list:
+    def fetch_user(self, _key, _page) -> list:
         ref = []
-        if not _key:
-            return ref
 
-        res = requests.get(self._url + "/search.php?word=%s&g=1&m=1" % _key)
+        res = requests.get(self._url + "/search.php?word=%s&g=1&m=1&p=%s" % (_key, _page))
         bs = BeautifulSoup(res.text, "html.parser")
         a_tags = bs.find_all("a")
         for _a in a_tags:
@@ -31,4 +29,4 @@ class Koe:
 
 if __name__ == "__main__":
     koe = Koe()
-    print(koe.fetch_user("a"))
+    print(koe.fetch_user("あ", 1))

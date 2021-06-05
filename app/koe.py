@@ -15,7 +15,8 @@ class Koe:
         config.read(_file_name)
         return config["DEFAULT"]
 
-    def fetch_user(self, _key, _page) -> list:
+    def fetch_user(self, _key: str, _page: int = 0, _limit_page: int = 10) -> list:
+
         ref = []
         is_next_page = False
 
@@ -29,11 +30,17 @@ class Koe:
             elif _a.string == "Next":
                 is_next_page = True
 
+        for _path in ref:
+            self.fetch_content(_path)
+
+        if _page == _limit_page:
+            return
+
         if is_next_page:
             time.sleep(2)
             self.fetch_user(_key, _page+1)
 
-        return ref
+        return
 
     def fetch_content(self, path: str):
         res = requests.get(self._url + "/%s" % path)

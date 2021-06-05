@@ -17,7 +17,7 @@ class Koe:
 
     def fetch_user(self, _key: str, _page: int = 0, _limit_page: int = 10) -> list:
 
-        ref = []
+        ref = set()
         is_next_page = False
 
         res = requests.get(self._url + "/search.php?word=%s&g=1&m=1&p=%s" % (_key, _page))
@@ -26,7 +26,7 @@ class Koe:
         for _a in a_tags:
             _href = _a["href"]
             if _href[:10] == "detail.php":
-                ref.append(_a["href"])
+                ref.add(_a["href"])
             elif _a.string == "Next":
                 is_next_page = True
 

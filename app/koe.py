@@ -35,6 +35,20 @@ class Koe:
 
         return ref
 
+    def fetch_content(self, path: str):
+        res = requests.get(self._url + "/%s" % path)
+        bs = BeautifulSoup(res.text, "html.parser")
+        # TODO: store
+        _title = bs.find("h2").text
+        _audio = bs.find("audio")
+        _src = _audio.find("source")["src"]
+        _text = bs.find("div", id="text")
+        _user_text, length_date  = _text.find_all("p")[:2]
+        length, created_date = length_date.text.split("@")
+        _p = _user_text.text.find(":")
+        _user = _user_text.text[:_p-1]
+        _body_text = _user_text.text[_p+1:]
+        print(_title, _user, _body_text, length[:-2], created_date)
 
 if __name__ == "__main__":
     koe = Koe()

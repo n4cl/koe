@@ -1,6 +1,7 @@
 import sys
 import time
 import configparser
+from logging import getLogger, StreamHandler, DEBUG
 import requests
 from bs4 import BeautifulSoup
 
@@ -9,6 +10,16 @@ class Koe:
         self._init_file = "koe.ini"
         self._config = self._read_init_file(self._init_file)
         self._url = self._config["URL"]
+        self.logger = self._setup_logger()
+
+    def _setup_logger(self):
+        logger = getLogger(__name__)
+        handler = StreamHandler()
+        handler.setLevel(DEBUG)
+        logger.setLevel(DEBUG)
+        logger.addHandler(handler)
+        logger.propagate = False
+        return logger
 
     def _read_init_file(self, _file_name):
         config = configparser.ConfigParser()
@@ -33,7 +44,8 @@ class Koe:
         for _path in ref:
             self.fetch_content(_path)
 
-        if _page == _limit_page:
+        if _page >= _limit_page:
+            self.logger.info("Suspended because _limit_page has been reached")
             return
 
         if is_next_page:

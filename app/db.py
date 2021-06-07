@@ -1,8 +1,9 @@
 import sqlite3
-con = sqlite3.connect('koe.db', isolation_level="EXCLUSIVE")
-cur = con.cursor()
+con = sqlite3.connect('koe.db', isolation_level=None)
 
-cur.execute("""
+con.execute("BEGIN")
+
+con.execute("""
 CREATE TABLE content(
     id INTEGER PRIMARY KEY,
     title TEXT,
@@ -14,4 +15,5 @@ CREATE TABLE content(
     created_date TEXT,
     updated_date TEXT
 )""")
-con.commit()
+
+con.execute("COMMIT")

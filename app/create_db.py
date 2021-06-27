@@ -11,8 +11,8 @@ CREATE TABLE content(
     body TEXT,
     file TEXT,
     play_time INTEGER,
+    view INTEGER,
     fav INTEGER,
-    views INTEGER,
     created_date TEXT,
     updated_date TEXT
 )""")

@@ -5,8 +5,9 @@ services:
             context: ./
         ports:
             - "5000:5000"
+        tty: true
         volumes:
             - ./app:/usr/local/app
             - ./tests:/usr/local/tests
+            - ./storage:/usr/local/storage
         container_name: koe_app
-        entrypoint: /bin/sh -c "while :; do sleep 10; done"

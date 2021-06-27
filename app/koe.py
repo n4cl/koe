@@ -1,5 +1,7 @@
 import sys
 import time
+import datetime
+import sqlite3
 import configparser
 from logging import getLogger, StreamHandler, DEBUG
 import requests
@@ -11,6 +13,8 @@ class Koe:
         self._config = self._read_init_file(self._init_file)
         self._url = self._config["URL"]
         self.logger = self._setup_logger()
+        self.storage_path = "/usr/local/storage/"
+        self.connect = sqlite3.connect(self.storage_path + 'koe.db', isolation_level=None)
 
     def _setup_logger(self):
         logger = getLogger(__name__)
@@ -57,7 +61,7 @@ class Koe:
     def fetch_content(self, path: str):
         res = requests.get(self._url + "/%s" % path)
         bs = BeautifulSoup(res.text, "html.parser")
-        # TODO: store
+        _id = path.split("=")[-1]
         _title = bs.find("h2").text
         _audio = bs.find("audio")
         _src = _audio.find("source")["src"]
@@ -67,7 +71,27 @@ class Koe:
         _p = _user_text.text.find(":")
         _user = _user_text.text[:_p-1]
         _body_text = _user_text.text[_p+1:]
-        print(_title, _user, _body_text, length[:-2], created_date)
+        clap = bs.find("div", id="clap-inner")
+        _views = clap.text.split(":")[-1][1:-1]
+        _file_path = ""
+
+        autio_data = requests.get("https:" + _src)
+        _file_path = self.storage_path + _src.split("/")[-1]
+        with open(_file_path, "wb") as save_file:
+            save_file.write(autio_data.content)
+
+        self.insert_content(_id, _user, _title, _body_text, _file_path, length[:-2], _views, 0, created_date)
+
+    def insert_content(self, _id, _user, _title, _body, _file, _play_time, _view, _fav, created_date):
+        try:
+            self.connect.execute("BEGIN")
+            self.connect.execute("INSERT INTO content VALUES (:id,:user,:title,:body,:file,:play_time,:fav,:view,:created_date,:updated_date)",
+                                                             (_id, _user, _title, _body, _file, _play_time, _view, _fav, created_date, datetime.datetime.now()))
+            self.connect.execute("COMMIT")
+        except Exception as e:
+            self.connect.execute("ROLLBACK")
+            raise e
+
 
 if __name__ == "__main__":
     koe = Koe()
